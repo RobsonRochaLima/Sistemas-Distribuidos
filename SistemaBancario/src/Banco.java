@@ -22,6 +22,9 @@ public class Banco {
         this.senha = senha;
         this.saldo = saldo;
     }
+    public Banco() {
+        
+    }
 
     public int getId() {
         return id;
@@ -63,6 +66,10 @@ public class Banco {
         this.saldo = saldo;
     }
 
+    public void imprimir(){
+        System.out.println("Id: " + id + ", Nome: " + nome + ", Conta: " + conta + ", Senha: " + senha + ", Saldo: " + saldo);
+    }
+    
     @Override
     public String toString() {
         return "Banco{" + "id=" + id + ", nome=" + nome + ", conta=" + conta + ", senha=" + senha + ", saldo=" + saldo + '}';

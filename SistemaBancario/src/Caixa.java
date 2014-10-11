@@ -41,9 +41,7 @@ public class Caixa {
                     while (finishValidacao == false) {   //validação cliente                       
 
                         System.out.println("Digite a conta: ");
-                        conta = teclado.nextLine();
-
-                        //String vazio = teclado.nextLine();  //corrigindo bug Scanner
+                        conta = teclado.nextLine();                       
 
                         System.out.println("Digite a senha: ");
                         senha = teclado.nextLine();
@@ -59,46 +57,49 @@ public class Caixa {
                     concat = concat + conta + senha;
                     saida.println(0+concat); //enviando p/ servidor
                     
-                    
+                    //System.out.println("[Cliente] s.nextInt(): " + s.nextInt());
                     if (s.nextInt() >= 0) {  //verifica se existe e apresenta menu de operações                        
-                        
+                        //System.out.println("ID: " + s.nextInt());
                         while(finishOper == false){
                             System.out.println("OPERAÇÕES: -- (1)Saque (2)Deposito (3)Saldo (4)Extrato");
                             int oper = teclado.nextInt();
                             double valor;
-                            String _id;
+                            //String _id;
                            
                             switch(oper){
                                 case 1:
                                 {                                                                        
-                                    System.out.print("Digite o valor: ");
+                                    System.out.print("Digite o valor saque: ");
                                     valor = teclado.nextDouble();
-                                    teclado.nextLine();                                            
                                     
-                                    saida.println(9+concat); //opção 9: retornar id   
-                                    _id = s.nextLine(); 
-                                    
-                                    
-                                    saida.println("1" + valor + _id); //opçcao 1: valor-saque + id
-                                    System.out.println(s.nextLine());
-                                                                        
-                                 break;   
+                                    saida.println("1" + valor + conta); //opçcao 1: valor-saque + id//                                    
+                                    break;   
                                 }
                                     
                                 case 2:
                                 {
-                                    System.out.print("Digite o valor: ");
+                                    System.out.print("Digite o valor deposito: ");
                                     valor = teclado.nextDouble();
                                     
-                                    saida.println(2+concat);
-                                    System.out.println("s.nextLine: " + s.nextLine());
-                                    
+                                    saida.println("2" + valor + conta);                                    
                                     break;
                                 }
+                                case 3:
+                                {                                    
+                                    saida.println("3" + concat);
+                                    //s.nextLine();
+                                    System.out.println("Saldo: " + s.nextLine());
+                                    break;
+                                }
+                                    
                                 
                             }
                         }
                         
+                    }else{
+                        System.out.println("Conta ou senha não encontrado, tente novamente...");
+                        finishCaixa = true;
+                        break;
                     }
                     break;
                 }

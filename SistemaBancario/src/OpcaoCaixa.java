@@ -17,7 +17,14 @@ import java.util.Scanner;
  */
 public class OpcaoCaixa {
     Scanner ler = new Scanner(System.in);
-    ArrayList<Dados> cliente = new ArrayList<Dados>();
+    
+    public char identificacaoUsuario(String texto){        
+        char x = texto.charAt(0);
+        return x;
+    }
+    
+    
+    
     
     public boolean verificaTamanho(String conta, String senha){
         int tam_conta = conta.length();
@@ -42,17 +49,39 @@ public class OpcaoCaixa {
         return c;
     }
     
-    //1 - 200.0 - 12345
+    //1 - 2000.0 - 12345
     public String retornaContaComValor(String conta){
+        String c ="", b="",a="";
+        int tam = conta.length();
+        
+        for(int j = tam-1; j>=0;j--){
+            b = b + conta.charAt(j);
+        }
+        
+        //543210.00021
+        for(int i=0; i<5;i++){
+            c = c + b.charAt(i);
+        }
+        
+        //54321
+        int tam2 = c.length();
+        for(int k = tam2-1; k>=0;k--){
+            a = a + c.charAt(k);
+        }
+        
+        return a;
+    }    
+    
+    //3 - 12345
+    public String retornaContaSaldo(String conta){
         String c ="";
         
-        for(int i=6; i<conta.length();i++){
+        for(int i=1; i<conta.length();i++){
             c = c + conta.charAt(i);
         }
         
         return c;
     }
-    
     
     
     //0 12345 -> 12345 <-
@@ -64,10 +93,12 @@ public class OpcaoCaixa {
         return s;
     }
     
+    //retorna opção
     public char option(String texto){        
         return texto.charAt(0);
     }
     
+     //1 - 1000.0 - 12345
      //1 - 200.0 - 12345
      public double retornaValorSaqueDeposito(String v){
         String val="";
@@ -80,26 +111,8 @@ public class OpcaoCaixa {
         return valor;
     }
     
-    public String retornandoID(String v){ //150.02
-        int tam = v.length()-1;       
-        
-        String text = "";
-        text = text + v.charAt(tam);
-        
-        return text;   
-    }
     
     
-   public static void main(String[] args){
-       String valor;
-       OpcaoCaixa o = new OpcaoCaixa();
-      // valor = o.autenticar(12345,123);
-       //o.listarClientes();
-       //valor = ;
-       System.out.println("Valooor: " + o.retornandoID("150.02"));
-       //System.out.println(valor);
-       
-   } 
     
 }
 

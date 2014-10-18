@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 /*
@@ -15,12 +17,21 @@ import java.util.Scanner;
  * @author labs
  */
 public class Caixa {
-
+    //pegar id automatico
     public static void main(String[] args) throws UnknownHostException, IOException {
+        ArrayList<String> extrato = new ArrayList<String>();                    
         String senha = "", conta = "", concat = "";
         int opt;
         boolean finishCaixa = false, finishValidacao = false, finishOperacao = false, finishOper = false;
         Caixa c = new Caixa();
+        
+//        Random gerador = new Random();
+//        int id = gerador.nextInt(100); //pega um numero aleatorio
+//        String _id = id+"";
+//        ArrayList<Identificacao> identificar = new ArrayList<Identificacao>();
+//        Identificacao ident = new Identificacao(_id);
+        
+        
         Socket caixa = new Socket("127.0.0.1", 12345);
         System.out.println("O cliente se conectou ao servidor!");
 
@@ -29,7 +40,7 @@ public class Caixa {
 
         Scanner s = new Scanner(caixa.getInputStream());
 
-
+        //saida.println(id);
 
         while (finishCaixa == false) { //menu inicial
             System.out.println("CAIXA -- (0)Autenticação (5)Sair");
@@ -57,14 +68,13 @@ public class Caixa {
                     concat = concat + conta + senha;
                     saida.println(0+concat); //enviando p/ servidor
                     
-                    //System.out.println("[Cliente] s.nextInt(): " + s.nextInt());
-                    if (s.nextInt() >= 0) {  //verifica se existe e apresenta menu de operações                        
-                        //System.out.println("ID: " + s.nextInt());
+                    
+                    if (s.nextLine().equalsIgnoreCase("true")) {
+                        
                         while(finishOper == false){
-                            System.out.println("OPERAÇÕES: -- (1)Saque (2)Deposito (3)Saldo (4)Extrato");
+                            System.out.println("OPERAÇÕES: -- (1)Saque (2)Deposito (3)Saldo (4)Extrato (5)Sair");
                             int oper = teclado.nextInt();
-                            double valor;
-                            //String _id;
+                            double valor;                            
                            
                             switch(oper){
                                 case 1:
@@ -72,7 +82,9 @@ public class Caixa {
                                     System.out.print("Digite o valor saque: ");
                                     valor = teclado.nextDouble();
                                     
-                                    saida.println("1" + valor + conta); //opçcao 1: valor-saque + id//                                    
+                                    saida.println("1" + valor + conta); //opçcao 1: valor-saque + id// 
+                                    System.out.println(s.nextLine());
+                                    extrato.add("Sacou " + valor);
                                     break;   
                                 }
                                     
@@ -81,18 +93,38 @@ public class Caixa {
                                     System.out.print("Digite o valor deposito: ");
                                     valor = teclado.nextDouble();
                                     
-                                    saida.println("2" + valor + conta);                                    
+                                    saida.println("2" + valor + conta);
+                                    System.out.println(s.nextLine());
+                                    extrato.add("Depositou " + valor);
                                     break;
                                 }
                                 case 3:
                                 {                                    
-                                    saida.println("3" + concat);
-                                    //s.nextLine();
-                                    System.out.println("Saldo: " + s.nextLine());
+                                    saida.println("3" + conta);
+                                    String x = s.nextLine();
+                                  
+                                    System.out.println("Saldo: " + x);                                    
                                     break;
                                 }
+                                case 4:
+                                {
+                                    System.out.println("-------------------------------------------");
+                                    System.out.println("Data       hora   Operação");
+                                    System.out.println("-------------------------------------------");
+                                    for(int i=0; i < extrato.size();i++){
+                                        System.out.println("99/99/999 12:00   " + extrato.get(i));   
+                                    }
+                                    System.out.println("-------------------------------------------");
+                                    System.out.println("");System.out.println("");System.out.println("");System.out.println("");
                                     
-                                
+                                    break;
+                                }
+                                case 5:
+                                {
+                                    finishOper = true;
+                                    break;
+                                }
+                                                                    
                             }
                         }
                         
@@ -106,7 +138,7 @@ public class Caixa {
 
 
                 case 5: {
-                    //stop = true;
+                    finishCaixa = true;
                     break;
                 }
 
@@ -136,21 +168,3 @@ public class Caixa {
 
     }
 }
-//        while(stop == false){
-//            System.out.print("Digite a conta: ");
-//            conta = teclado.nextLine();
-//            System.out.print("Digite a senha: ");
-//            senha = teclado.nextLine();
-//            stop = c.verificaTamanho(conta, senha);
-//            if(stop == false){
-//                System.out.println("A CONTA E SENHA DEVEM CONTER 5 DIGITOS  (PADRÃO-> CONTA: 99999 - SENHA: 99999) ");
-//            }            
-//        }
-//        
-//        String palavra = "";
-//        palavra = palavra + conta + senha; //concatena conta e senha
-//       
-//        saida.println(palavra); //envia servidor                       
-//        System.out.println(s.nextLine());
-//int autenticacao = s.nextInt();
-

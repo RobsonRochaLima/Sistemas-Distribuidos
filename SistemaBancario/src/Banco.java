@@ -22,9 +22,7 @@ public class Banco {
         this.senha = senha;
         this.saldo = saldo;
     }
-    public Banco() {
-        
-    }
+    
 
     public int getId() {
         return id;

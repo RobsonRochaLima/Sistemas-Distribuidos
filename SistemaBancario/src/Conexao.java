@@ -3,189 +3,167 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.nio.cs.Surrogate;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-    
 /**
  *
  * @author labs
  */
-public class Conexao extends Thread{
+public class Conexao extends Thread {
+
     private Socket socket;
     private ArrayList<Banco> dados;
+    private ArrayList<Control> controlador;
+    
     
     Scanner ler = new Scanner(System.in);
 
-   
-    public Conexao(Socket socket, ArrayList dados) {
+    public Conexao(Socket socket, ArrayList<Banco> dados, ArrayList<Control> controlador) {
         this.socket = socket;
         this.dados = dados;
+        this.controlador = controlador;       
     }
+
    
-   
-    public void run(){
+    
+     
+
+    public void run() {
+        
         
         Scanner s;
-        OpcaoCaixa x = new OpcaoCaixa();         
-        String conta, senha, opt;
-        int autenticacao;
-        boolean stop=false; int autorizacao;
-        int cont = 0, achou = 0;
+        OpcaoCaixa x = new OpcaoCaixa();
+        OpcaoControlador y = new OpcaoControlador();
+        String conta, senha;                
+        int achou = 0;
         double saldo;
-  
-        
-        
-        try 
-         {
+
+        try {
+            
             s = new Scanner(socket.getInputStream());  //entrada socket
             PrintStream saidaServer = new PrintStream(socket.getOutputStream());//mapeia saida de dados
-            
+                        
+            Random gerador = new Random(); //gerar id caixa
+            gerador.nextInt(100);
             
             while (s.hasNextLine()) {
                 String texto = s.nextLine();                
-                String escolha = "" + x.option(texto); //retorn a opção do cliente                               
+                String identificacao = x.identificacaoUsuario(texto) + "";
+                System.out.println("Texto: " + texto);
+                 
                 
-                System.out.println("[servidor] chegou: -> " + texto);                                
-                                
-                if(escolha.equalsIgnoreCase("0")){  
-                    conta = x.retornaConta(texto);
-                    senha = x.retornaSenha(texto);                                                           
-                    
-                    for (Banco banco : dados) {
-//                        System.out.println("[servidor] Banco.conta: " + banco.conta + ", Conta: " + conta);
-                        if(banco.getConta().equalsIgnoreCase(conta)){
-//                         System.out.println("Achou...");
-                                    
-                           achou++;
-//                         System.out.println("[servido] autenticacao: " + banco.id);
-                           saidaServer.println(banco.id); 
-                        }
-                    
-                    }
-                    if(achou <= 0){ //se cliente não encontrado
-                        saidaServer.println(-1);
-                    } 
-                    
-                 }
-
-                
-                //1 - 200.0 - 12345
-                if(escolha.equalsIgnoreCase("1")){ //Saque                      
-//                  System.out.println("[servidor] escolha 1: " + texto);
-                    String _conta = x.retornaContaComValor(texto); //retorna somente a conta qndo o texto possuir valor do saque incluso                    
-                    double valor = x.retornaValorSaqueDeposito(texto);
-                    
-//                    String _id = x.retornandoID(texto);
-//                    int id = Integer.parseInt(_id);
-                    
+                if(identificacao.equalsIgnoreCase("#")){ //diferencia caixa de controlador
+                   int find = 0;
+                   String escolha1 = y.retornaOpcaoControlador(texto);
+                   System.out.println("escolha: " + escolha1);
                    
-                    System.out.println("[saque] conta: " + _conta + ", valor: " + valor);
-                    
-                    for (Banco banco : dados) {
-                        if(banco.getConta().equalsIgnoreCase(_conta)){
-                            banco.saldo -= valor;
-                            System.out.println("[servidor] saque Saldo: " + banco.saldo);
+                   if(escolha1.equalsIgnoreCase("0")){
+                       System.out.println("Entroi escolha 0");
+                        String code = y.retornaConta(texto);
+                        String password = y.retornaSenha(texto);
+//                        System.out.println("Codigo: " + code + ", senha: " + password);
+                        //verificando se controlador existe
+                        for (Control controla : controlador) { //Banco banco : dados
+                            System.out.println("for -> codigo: " + code + ", senha: " + password);
+                            if(controla.getCodigo().equalsIgnoreCase(code) && controla.getSenha().equalsIgnoreCase(password)){
+                                find++;
+                                saidaServer.println("true");
+                             }
                         }
-                    }
+                        System.out.println("fined: " + find);
+                        if(find == 0){
+                            saidaServer.println("false");
+                        }
+                    
+                   }
                    
-                                        
-                }
+                   
+                       
+                    
+                    
+                }else{
+                    
+                    String escolha = "" + x.option(texto); //retorn a opção do cliente
                 
-                
-                //2 - 100.0 - 12345 - 12345
-                if(escolha.equalsIgnoreCase("2")){ //Deposito                    
-                    String _conta = x.retornaContaComValor(texto);
-                    double valor = x.retornaValorSaqueDeposito(texto);
-                    
-                    System.out.println("[deposito] Conta: " + _conta + ", valor: " + valor);
-                    
-                    for (Banco banco : dados) {
-                        if(banco.getConta().equalsIgnoreCase(_conta)){
-                            banco.saldo += valor;
-                            System.out.println("[servidor] deposito Saldo: " + banco.saldo);
-                            
-                        }
-                    }
-                    
-                    
-                }
-                //3 - 12345 - 12345
-                if(escolha.equalsIgnoreCase("3")){
-                    System.out.println("Entrou escolha 3: " + texto);
-                    String _conta = x.retornaConta(texto);
-                    
-                    System.out.println("[servido] Conta: " + _conta);
-                    
-                    for (Banco banco : dados) {                       
-                        if(banco.getConta().equalsIgnoreCase(_conta)){
-//                            System.out.println("Saldo: " + banco.getSaldo());
-                            String sald = ""+banco.getSaldo();
-                            saidaServer.print(sald);
-                            System.out.println("saldo: " + sald);
-                            
-                        }
+                    if (escolha.equalsIgnoreCase("0")) {
+                        int find=0;
+                        conta = x.retornaConta(texto);
+                        senha = x.retornaSenha(texto);
                         
+                        for (Banco banco : dados) {                        
+                            if (banco.getConta().equalsIgnoreCase(conta) && banco.getSenha().equalsIgnoreCase(senha)) {
+                                find++;
+                                saidaServer.println("true");
+                            }                                                        
+                        }
+                        if(find == 0){
+                                saidaServer.println("false");
+                        }                        
                     }
-                    
-                    
-                    
-                }
-                
-                
-                
-                
-                
-                
-                
-                if(escolha.equalsIgnoreCase("9")){ //retorna ID
-                    System.out.println("Entrou escolha 9");
-                    //buscando id cliente    
-                    conta = x.retornaConta(texto);
-                    senha = x.retornaSenha(texto);
-                    for(int i=0; i < dados.size(); i++){
-                        if(dados.get(i).conta.equalsIgnoreCase(conta) && dados.get(i).senha.equalsIgnoreCase(senha)){
-                            System.out.println("retorna id: " + dados.get(i).id);
-                            saidaServer.println(""+dados.get(i).id);
+
+                                    
+                    if (escolha.equalsIgnoreCase("1")) { //Saque                      
+                        String _conta = x.retornaContaComValor(texto); //retorna somente a conta qndo o texto possuir valor do saque incluso                    
+                        double valor = x.retornaValorSaqueDeposito(texto);                   
+
+                        for (Banco banco : dados) {
+                            if (banco.getConta().equalsIgnoreCase(_conta)) {
+
+                                if((banco.saldo - valor) < 0){
+                                    saidaServer.println("Não foi possiverl realizar saque, saldo insuficiente...");
+                                }else{
+                                    banco.saldo -= valor;
+                                    saidaServer.println("Saque realizado...");
+                                }
+                            }
                         }
                     }
-                }
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-            }               
-              
-            
-         } catch (IOException ex) {
+
+
+                    if (escolha.equalsIgnoreCase("2")) { //Deposito                    
+                        String _conta = x.retornaContaComValor(texto);
+                        double valor = x.retornaValorSaqueDeposito(texto);
+
+                        for (Banco banco : dados) {
+                            if (banco.getConta().equalsIgnoreCase(_conta)) {
+                                banco.saldo += valor;                            
+                                saidaServer.println("Deposito realizado...");
+                            }
+                        }
+                    }
+
+
+                    if (escolha.equalsIgnoreCase("3")) {
+                        String _conta = x.retornaContaSaldo(texto);
+
+                        for (Banco banco : dados) {
+                            if (banco.getConta().equalsIgnoreCase(_conta)) {
+                                String sald = banco.getSaldo() + "";
+                                saidaServer.println(sald);                            
+                            }
+                        }
+                    }
+
+
+            }
+
+
+
+            }
+
+
+        } catch (IOException ex) {
             Logger.getLogger(Conexao.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-    
+        }
+
+    }
 }
-}
-
-
-
-
-//                for(int i=0; i < dados.size(); i++){
-//                   System.out.println("Id: " + dados.get(i).id);
-//                   System.out.println("nome: " + dados.get(i).nome);
-//                   System.out.println("Conta: " + dados.get(i).conta);
-//                   System.out.println("Senha: " + dados.get(i).senha);
-//                   dados.get(i).saldo = 100;
-//                   System.out.println("Saldo: " + dados.get(i).saldo);
-//                }
-

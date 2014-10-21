@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /*
  * To change this template, choose Tools | Templates
@@ -13,17 +14,21 @@ import java.util.ArrayList;
 public class Identificacao {
     String id;
 
-    Identificacao(String id) {
-        this.id = id;
-    }
+        public Identificacao(String id) {
+            this.id = id;
+        }
 
-    public String getId() {
-        return id;
-    }
+        public Identificacao() {
+        }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+        public String gerador(){
+            Random gerador = new Random();
+            int id = gerador.nextInt(10); //pega um numero aleatorio
+            String _id = id+"";
+                      
+            return _id;
+        }
+    
 
     @Override
     public String toString() {

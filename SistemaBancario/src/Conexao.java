@@ -43,23 +43,29 @@ public class Conexao extends Thread {
         Scanner s;
         OpcaoCaixa x = new OpcaoCaixa();
         OpcaoControlador y = new OpcaoControlador();
-        String conta, senha;                
+        String conta, senha, idCaixa=""; 
         int achou = 0;
         double saldo;
 
         try {
             
             s = new Scanner(socket.getInputStream());  //entrada socket
-            PrintStream saidaServer = new PrintStream(socket.getOutputStream());//mapeia saida de dados
-                        
-            Random gerador = new Random(); //gerar id caixa
-            gerador.nextInt(100);
+            PrintStream saidaServer = new PrintStream(socket.getOutputStream());//mapeia saida de dados                        
             
             while (s.hasNextLine()) {
                 String texto = s.nextLine();                
                 String identificacao = x.identificacaoUsuario(texto) + "";
-                System.out.println("Texto: " + texto);
-                 
+                System.out.println("Texto: " + texto);                
+                
+                if(texto.charAt(0) == 'X'){ //veirfica se já foi gerado id
+                    System.out.println("Id retornado: " + x.retornaId(texto));
+                    idCaixa = idCaixa + texto.charAt(1);
+                    Identificacao id_caixas = new Identificacao(idCaixa);
+                    //System.out.println("id's: " + idCaixa);                    
+                }
+                
+                
+                
                 
                 if(identificacao.equalsIgnoreCase("#")){ //diferencia caixa de controlador
                    int find = 0;
@@ -70,7 +76,7 @@ public class Conexao extends Thread {
                        System.out.println("Entroi escolha 0");
                         String code = y.retornaConta(texto);
                         String password = y.retornaSenha(texto);
-//                        System.out.println("Codigo: " + code + ", senha: " + password);
+
                         //verificando se controlador existe
                         for (Control controla : controlador) { //Banco banco : dados
                             System.out.println("for -> codigo: " + code + ", senha: " + password);
@@ -86,11 +92,15 @@ public class Conexao extends Thread {
                     
                    }
                    
-                   
+                   if(escolha1.equalsIgnoreCase("1")){
+                       System.out.println("Entrou escolha 1");
+                       
+                   }
                        
                     
                     
                 }else{
+                    
                     
                     String escolha = "" + x.option(texto); //retorn a opção do cliente
                 

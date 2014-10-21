@@ -17,21 +17,14 @@ import java.util.Scanner;
  * @author labs
  */
 public class Caixa {
-    //pegar id automatico
+
     public static void main(String[] args) throws UnknownHostException, IOException {
         ArrayList<String> extrato = new ArrayList<String>();                    
         String senha = "", conta = "", concat = "";
         int opt;
         boolean finishCaixa = false, finishValidacao = false, finishOperacao = false, finishOper = false;
-        Caixa c = new Caixa();
-        
-//        Random gerador = new Random();
-//        int id = gerador.nextInt(100); //pega um numero aleatorio
-//        String _id = id+"";
-//        ArrayList<Identificacao> identificar = new ArrayList<Identificacao>();
-//        Identificacao ident = new Identificacao(_id);
-        
-        
+        Caixa c = new Caixa();                
+      
         Socket caixa = new Socket("127.0.0.1", 12345);
         System.out.println("O cliente se conectou ao servidor!");
 
@@ -39,11 +32,14 @@ public class Caixa {
         PrintStream saida = new PrintStream(caixa.getOutputStream()); //recebe dados do cliente
 
         Scanner s = new Scanner(caixa.getInputStream());
-
-        //saida.println(id);
-
+        
+        Identificacao _id = new Identificacao();
+        String id = _id.gerador();
+        
+        saida.println("X"+id);
+       
         while (finishCaixa == false) { //menu inicial
-            System.out.println("CAIXA -- (0)Autenticação (5)Sair");
+            System.out.println("CAIXA " + id + " -- (0)Autenticação (5)Sair");
             opt = teclado.nextInt();
             teclado.nextLine();
             

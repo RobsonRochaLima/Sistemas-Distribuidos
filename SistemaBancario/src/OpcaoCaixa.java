@@ -98,6 +98,15 @@ public class OpcaoCaixa {
         return texto.charAt(0);
     }
     
+    public String retornaId(String texto){
+        System.out.println("Texto chegando... " + texto);
+        String id="";
+        id = id + texto.charAt(1);
+        
+        return id;
+    }
+    
+    
      //1 - 1000.0 - 12345
      //1 - 200.0 - 12345
      public double retornaValorSaqueDeposito(String v){
@@ -112,6 +121,13 @@ public class OpcaoCaixa {
     }
     
     
+     public static void main(String[] args){
+         OpcaoCaixa o = new OpcaoCaixa();
+         
+         System.out.println("ID: " + o.retornaId("Ola"));
+         
+         
+     }
     
     
 }

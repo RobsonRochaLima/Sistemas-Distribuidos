@@ -64,6 +64,7 @@ public class Controlador {
                         switch(oper){
                             case 1:
                             {
+                                saida.println("#1");
                                 //criar uma lista de caixas
                                 break;
                             }

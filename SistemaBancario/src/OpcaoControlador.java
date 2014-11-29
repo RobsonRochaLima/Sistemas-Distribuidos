@@ -41,15 +41,13 @@ public class OpcaoControlador {
         for(int i=7; i < tam; i++){
             c = c + texto.charAt(i);
         }
-//        System.out.println("Senha: " + c);
-        return c;
-        
+        return c;       
     }
     
-    public String retornaOpcaoControlador(String texto){
-        String t = texto.charAt(1) + "";
-        return t;
-    }
+//    public String retornaOpcaoControlador(String texto){
+//        String t = texto.charAt(1) + "";
+//        return t;
+//    }
     
     
     

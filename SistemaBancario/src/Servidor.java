@@ -45,22 +45,17 @@ public class Servidor {
             controlador.add(d);
             controlador.add(e);
             controlador.add(f);
-            
-            
-                        
+                                              
             ServerSocket servidor = new ServerSocket(12345);  // cria novo servidor
-            System.out.println("Porta 12345 aberta!");
-   
-        //cliente ou controlador
-        
-        
-        
+            System.out.println("Porta 12345 aberta!");         
+                        
             while(true){
                  Socket caixa = servidor.accept();  //espera até o cliente se conectar
                  System.out.println("Nova conexão " + caixa.getInetAddress().getHostAddress());
 
-                 Conexao con = new Conexao(caixa, dados, controlador);
+                 ThreadCaixa con = new ThreadCaixa(caixa, dados, controlador);
                  con.start();      
+                
             }
     }
     

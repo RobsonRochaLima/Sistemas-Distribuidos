@@ -23,8 +23,7 @@ public class OpcaoCaixa {
         return x;
     }
     
-    
-    
+
     
     public boolean verificaTamanho(String conta, String senha){
         int tam_conta = conta.length();
@@ -98,8 +97,7 @@ public class OpcaoCaixa {
         return texto.charAt(0);
     }
     
-    public String retornaId(String texto){
-        System.out.println("Texto chegando... " + texto);
+    public String retornaId(String texto){        
         String id="";
         id = id + texto.charAt(1);
         
@@ -119,16 +117,6 @@ public class OpcaoCaixa {
         valor = Double.parseDouble(val);         
         return valor;
     }
-    
-    
-     public static void main(String[] args){
-         OpcaoCaixa o = new OpcaoCaixa();
-         
-         System.out.println("ID: " + o.retornaId("Ola"));
-         
-         
-     }
-    
     
 }
 
